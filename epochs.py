@@ -1,4 +1,4 @@
-"""Parsing code for DICOMS and contour files"""
+"""Code for (1) parsing DICOMS and contour files and (2) generating batches/epochs for training a convolutional neural network"""
 
 import pydicom
 import numpy as np
