@@ -40,6 +40,9 @@ class create_epoch():
         self.shuffled_df = self.file_info_df.sample(frac=1).copy()
         self.batch_start = 0
 
+    def get_shuffled_df(self):
+        return self.shuffled_df
+
 
 def create_file_info_df(all_files_dir):
     """
