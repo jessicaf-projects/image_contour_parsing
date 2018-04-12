@@ -18,6 +18,7 @@ class create_epoch():
         self.shuffled_df = self.file_info_df.sample(frac=1).copy()
         self.batch_size = batch_size
         self.batch_start = 0
+        self.random_state = 0
 
     def get_current_batch(self):
         if self.batch_start >= self.file_info_df.shape[0]:
@@ -37,7 +38,8 @@ class create_epoch():
             return images, targets
 
     def new_epoch(self):
-        self.shuffled_df = self.file_info_df.sample(frac=1).copy()
+        self.random_state+=1
+        self.shuffled_df = self.file_info_df.sample(frac=1,random_state=self.random_state).copy()
         self.batch_start = 0
 
     def get_shuffled_df(self):
