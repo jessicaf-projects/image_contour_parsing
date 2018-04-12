@@ -98,6 +98,6 @@ def check_epochs(filename,out_dir = 'test_epoch_dir'):
 if __name__=="__main__":
     C = check_file_info_outputs('../final_data')
     C.save_images_with_masks()
-    #C.save_input_and_target_files()
-    #C.export_image_info()
-    #check_epochs('../final_data')
+    C.save_input_and_target_files()
+    C.export_image_info()
+    check_epochs('../final_data')
