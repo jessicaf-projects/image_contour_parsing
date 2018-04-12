@@ -2,6 +2,23 @@
 
 This code prepares a set of dicom images and manually drawn contours for input into a convolutional neural network for image segmentation.
 
+## Example usage
+
+'''
+from epochs import create_epoch
+
+epoch = create_epoch('final_data')
+images, targets = epoch.get_current_batch()
+while images is not None:
+    images, targets = epoch.get_current_batch()
+'''
+
+The above will iterate through each batch in the epoch. In order to create a new epoch, use:
+
+'''
+epoch.new_epoch()
+'''
+
 ## Parsing and matching the contours
 
 In order to verify that the contours are parsed correctly, I plotted the images and contours alongside each other. Some examples can be found in the folder testing/test_image_matching. This folder contains some examples of matched contours, dicom files, and masks.
