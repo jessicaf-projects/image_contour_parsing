@@ -3,14 +3,14 @@
 import pydicom
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 from PIL import Image, ImageDraw
-import shutil
 
 class create_epoch():
     """
-    This creates a new epoch and returns the batches
+    This creates a new epoch and returns the batches.
+    :param all_files_dir: top-level folder containing the images and contours
+    :return: numpy arrays containing the images and the target masks
     """
     def __init__(self,all_files_dir,batch_size=8):
         self.all_files_dir = all_files_dir
@@ -158,53 +158,6 @@ def parse_dicom_file(filename):
     except:
         print('Not a valid dicom file')
         return None
-
-# def parse_contour_file(filename):
-#     """Parse the given contour filename
-#
-#     :param filename: filepath to the contourfile to parse
-#     :return: list of tuples holding x, y coordinates of the contour
-#     """
-#
-#     coords_lst = []
-#
-#     with open(filename, 'r') as infile:
-#         for line in infile:
-#             coords = line.strip().split()
-#
-#             x_coord = float(coords[0])
-#             y_coord = float(coords[1])
-#             coords_lst.append((x_coord, y_coord))
-#
-#     return coords_lst
-
-
-# def parse_dicom_file(filename):
-#     """Parse the given DICOM filename
-#
-#     :param filename: filepath to the DICOM file to parse
-#     :return: dictionary with DICOM image data
-#     """
-#
-#     try:
-#         dcm = dicom.read_file(filename)
-#         dcm_image = dcm.pixel_array
-#
-#         try:
-#             intercept = dcm.RescaleIntercept
-#         except AttributeError:
-#             intercept = 0.0
-#         try:
-#             slope = dcm.RescaleSlope
-#         except AttributeError:
-#             slope = 0.0
-#
-#         if intercept != 0.0 and slope != 0.0:
-#             dcm_image = dcm_image*slope + intercept
-#         dcm_dict = {'pixel_data' : dcm_image}
-#         return dcm_dict
-#     except InvalidDicomError:
-#         return None
 
 
 def poly_to_mask(polygon, width, height):
