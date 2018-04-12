@@ -4,20 +4,20 @@ This code prepares a set of dicom images and manually drawn contours for input i
 
 ## Example usage
 
-'''
+```
 from epochs import create_epoch
 
 epoch = create_epoch('final_data')
 images, targets = epoch.get_current_batch()
 while images is not None:
     images, targets = epoch.get_current_batch()
-'''
+```
 
 The above will iterate through each batch in the epoch. In order to create a new epoch, use:
 
-'''
+```
 epoch.new_epoch()
-'''
+```
 
 ## Parsing and matching the contours
 
