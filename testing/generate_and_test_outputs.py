@@ -42,14 +42,14 @@ class check_file_info_outputs():
             cv2.imwrite(os.path.join(input_dir,'patient'+str(row.patient_num)+'image'+str(row.image_num)+'.png'),dicom_img)
             cv2.imwrite(os.path.join(target_dir, 'patient' + str(row.patient_num) + 'image' + str(row.image_num) + '.png'),255*img_mask.astype(int))
 
-    def save_images_with_masks(self,annotated_images_dir='test'):
+    def save_images_with_masks(self,annotated_images_dir='test_image_matching'):
         """
         This function saves the input and target images alongside
         each other in order to verify that they match.
         :param annotated_images_dir: Directory containing the annotated images
         :return:images outlined with the contours alongside the masks
         """
-        saved_images_dir = os.path.join(self.all_files_dir, annotated_images_dir)
+        saved_images_dir = annotated_images_dir
         if os.path.isdir(saved_images_dir):
             shutil.rmtree(saved_images_dir)
         os.mkdir(saved_images_dir)
@@ -63,7 +63,7 @@ class check_file_info_outputs():
             ax[0].axis('off')
             ax[1].imshow(img_mask, cmap='gray')
             ax[1].axis('off')
-            plt.savefig(os.path.join(self.all_files_dir, 'test/patient' + row.patient_id + 'image' + str(row.image_num) + '.png'))
+            plt.savefig(os.path.join(saved_images_dir, 'patient' + str(row.patient_id) + 'image' + str(int(row.image_num)) + '.png'))
             plt.close()
 
     def export_image_info(self,csv_filename='file_info.csv'):
@@ -98,6 +98,6 @@ def check_epochs(filename,out_dir = 'test_epoch_dir'):
 if __name__=="__main__":
     C = check_file_info_outputs('../final_data')
     C.save_images_with_masks()
-    C.save_input_and_target_files()
-    C.export_image_info()
-    check_epochs('../final_data')
+    #C.save_input_and_target_files()
+    #C.export_image_info()
+    #check_epochs('../final_data')
