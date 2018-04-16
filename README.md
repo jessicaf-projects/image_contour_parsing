@@ -35,6 +35,17 @@ As it stands, the unit tests are not comprehensive, and future work includes gen
 
 To improve this pipeline, I can add better error-checking to account for many more possible cases of missing dicom files, and provide better control over the randomization/generation/exporting of the batch and epoch information. I can also integrate PyTorch or TensorFlow functions to train a convolutional neural network. Finally, I can modify this project so that the functions are command-line executable.
 
+## Changes to the code to include the o-contour
 
+In order to modify the code to parse the o-contour, I used the o-contour filenames to search for the corresponding Dicom files and i-contour files. The reason for this was that not all of the Dicom and i-contour files had an o-contour file. In the event that not all o-contour files had an i-contour or Dicom file, the try/except statement would take care of this.
 
+I also noted when plotting the i-contours and o-contours atop the images, that the last files listed in the link file did not appear to have accurate o-contour files. Because of this, I created a new link file that omitted the last file.
+
+## Analysis for Heuristic LV segmentation
+
+The analysis for LV segmentation is located in analysis/Heuristic_LV_Segmentation_approaches.ipynb. The histogram in that file shows that a simple thresholding scheme (thresholding all of the images based on a specific pixel value in order to get the i-contour) would not be sufficient. There is considerable overlap in the average pixel intensities between the inner blood pool and outer contour, so selecting a specific value for thresholding likely wouldn't work. There is also considerable overlap between the individual pixel intensities, as shown in the plot above.
+
+Other heuristic methods have the potential to work in this case. Specifically, methods that don't rely on the absolute pixel value but instead rely on the relative pixel value may be useful. One such method would start at the o-contour boundary and examine pixel values traveling toward the centroid of the o-contour, looking for a sudden increase in the pixel values. The point at which the values increase suddenly would define the i-contour boundary.
+
+Using the intensities directly may work if we take the average over multiple neighboring pixels (but not all) in case there are a small number of pixels with very high or low values. Finally, thresholding in combination with image dilation/erosion may work for using the intensities to determine the inner contour.
 
