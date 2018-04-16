@@ -45,7 +45,7 @@ To test that the i-contours and o-contours were correctly placed, I generated pl
 
 ## Analysis for Heuristic LV segmentation
 
-The analysis for LV segmentation is located in analysis/Heuristic_LV_Segmentation_approaches.ipynb. The histogram in that file shows that a simple thresholding scheme (thresholding all of the images based on a specific pixel value in order to get the i-contour) would not be sufficient. There is considerable overlap in the average pixel intensities between the inner blood pool and outer contour, so selecting a specific value for thresholding likely wouldn't work. There is also considerable overlap between the individual pixel intensities, as shown in the plot above.
+The analysis for LV segmentation is located in analysis/Heuristic_LV_Segmentation_approaches.ipynb. The histogram in that file shows that a simple thresholding scheme (thresholding all of the images based on a specific pixel value in order to get the i-contour) would not be sufficient. There is considerable overlap in the average pixel intensities between the inner blood pool and outer contour, so selecting a specific value for thresholding likely wouldn't work. There is also considerable overlap between the individual pixel intensities.
 
 Other heuristic methods have the potential to work in this case. Specifically, methods that don't rely on the absolute pixel value but instead rely on the relative pixel value may be useful. One such method would start at the o-contour boundary and examine pixel values traveling toward the centroid of the o-contour, looking for a sudden increase in the pixel values. The point at which the values increase suddenly would define the i-contour boundary.
 
