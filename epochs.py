@@ -62,16 +62,7 @@ def create_file_info_df(all_files_dir):
         os.mkdir(os.path.join(all_files_dir, 'masks'))
 
 
-    file_info_df = pd.DataFrame(columns=['image_num'])#,
-                                         # 'patient_num'
-                                         # 'original_id',
-                                         # 'patient_id',
-                                         # 'o_contour_file_name_with_path',
-                                         # 'i_contour_file_name_with_path',
-                                         # 'dicom_file_name_with_path',
-                                         # 'img_size'
-                                         # 'o_coords',
-                                         # 'i_coords'])
+    file_info_df = pd.DataFrame(columns=['image_num'])
     for idx, row in link.iterrows():
         patient_num = int(row.patient_id.split('SCD0000')[1].split('01')[0])
         # check for errors with the files and reduce the dataset depending on these errors
@@ -134,7 +125,7 @@ def create_file_info_df(all_files_dir):
 #     """
 #     Make sure that the contours in the link file match based on their numbers.
 #     :param link_df:
-#     :return:
+#     :return: link dataframe with the non-matching numbers removed.
 #     """
 #     'SCD0000501, SC-HF-I-6'
 #     bad_idx = []
@@ -215,7 +206,7 @@ def poly_to_mask(polygon, width, height):
 
 if __name__=="__main__":
     file_info_df = create_file_info_df('final_data')
-    file_info_df.to_csv('file_info_df_april16_2018.csv')
+    file_info_df.to_csv('file_info_df.csv')
     # epoch = create_epoch('final_data')
     # images,targets = epoch.get_current_batch()
     # while images is not None:

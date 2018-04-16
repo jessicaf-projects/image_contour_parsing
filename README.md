@@ -39,7 +39,7 @@ To improve this pipeline, I can add better error-checking to account for many mo
 
 In order to modify the code to parse the o-contour, I used the o-contour filenames to search for the corresponding Dicom files and i-contour files. The reason for this was that not all of the Dicom and i-contour files had an o-contour file. In the event that not all o-contour files had an i-contour or Dicom file, the try/except statement would take care of this.
 
-I also noted when plotting the i-contours and o-contours atop the images, that the last files listed in the link file did not appear to have accurate o-contour files. Because of this, I created a new link file that omitted the last file.
+I also noted when plotting the i-contours and o-contours atop the images, that the last files listed in the link file did not appear to have accurate o-contour files. I checked to see if the correct ordering/matching of the link files was by the filename (e.g. if SCD0000501 and SC-HF-I-5 should correspond to each other) and wrote a function (parse_link_file, in epochs.py) to match these values. This was not the case, however--when I plotted these contours atop the image, they did not appear to match. Because of this, I created a new link file that omitted the last file.
 
 To test that the i-contours and o-contours were correctly placed, I generated plots that are located in testing/test_image_matching showing the images, contours, and masks.
 
