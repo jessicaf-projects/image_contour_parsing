@@ -38,7 +38,7 @@ class check_file_info_outputs():
 
         for idx, row in self.file_info_df.iterrows():
             dicom_img = parse_dicom_file(row.dicom_file_name_with_path)
-            img_mask = poly_to_mask(row.data_coords, dicom_img.shape[0], dicom_img.shape[1])
+            img_mask = poly_to_mask(row.o_coords, dicom_img.shape[0], dicom_img.shape[1])
             cv2.imwrite(os.path.join(input_dir,'patient'+str(row.patient_num)+'image'+str(row.image_num)+'.png'),dicom_img)
             cv2.imwrite(os.path.join(target_dir, 'patient' + str(row.patient_num) + 'image' + str(row.image_num) + '.png'),255*img_mask.astype(int))
 
@@ -56,13 +56,17 @@ class check_file_info_outputs():
 
         for idx, row in self.file_info_df.iterrows():
             dicom_img = parse_dicom_file(row.dicom_file_name_with_path)
-            img_mask = poly_to_mask(row.data_coords, dicom_img.shape[0], dicom_img.shape[1])
-            fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+            img_mask_o = poly_to_mask(row.o_coords, dicom_img.shape[0], dicom_img.shape[1])
+            img_mask_i = poly_to_mask(row.i_coords, dicom_img.shape[0], dicom_img.shape[1])
+            fig, ax = plt.subplots(1, 3, figsize=(15, 5))
             ax[0].imshow(dicom_img, cmap='gray')
-            ax[0].plot(np.array(row.data_coords)[:, 0], np.array(row.data_coords)[:, 1], 'r')
+            ax[0].plot(np.array(row.o_coords)[:, 0], np.array(row.o_coords)[:, 1], 'r')
+            ax[0].plot(np.array(row.i_coords)[:, 0], np.array(row.i_coords)[:, 1], 'r')
             ax[0].axis('off')
-            ax[1].imshow(img_mask, cmap='gray')
+            ax[1].imshow(img_mask_o, cmap='gray')
             ax[1].axis('off')
+            ax[2].imshow(img_mask_i, cmap='gray')
+            ax[2].axis('off')
             plt.savefig(os.path.join(saved_images_dir, 'patient' + str(row.patient_id) + 'image' + str(int(row.image_num)) + '.png'))
             plt.close()
 
@@ -97,7 +101,7 @@ def check_epochs(filename,out_dir = 'test_epoch_dir'):
 
 if __name__=="__main__":
     C = check_file_info_outputs('../final_data')
-    C.save_images_with_masks()
+    C.save_images_with_masks(annotated_images_dir='test_image_matching_april16_2018')
     C.save_input_and_target_files()
     C.export_image_info()
     check_epochs('../final_data')

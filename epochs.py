@@ -29,7 +29,7 @@ class create_epoch():
             targets = []
             for idx, row in current_batch.iterrows():
                 dicom_img = parse_dicom_file(row.dicom_file_name_with_path)
-                img_mask = poly_to_mask(row.data_coords, dicom_img.shape[0], dicom_img.shape[1])
+                img_mask = poly_to_mask(row.o_coords, dicom_img.shape[0], dicom_img.shape[1])
                 images.append(dicom_img)
                 targets.append(img_mask)
             images = np.array(images)
@@ -52,7 +52,7 @@ def create_file_info_df(all_files_dir):
     :param all_files_dir: top-level directory containing the contours and dicoms
     :return file_info_df: dataframe containing the filenames and coordinates of the contours and dicoms
     """
-    link_file = os.path.join(all_files_dir, 'link.csv')
+    link_file = os.path.join(all_files_dir, 'link_edited.csv')
     try:
         link = pd.read_csv(link_file)
     except:
@@ -62,29 +62,35 @@ def create_file_info_df(all_files_dir):
         os.mkdir(os.path.join(all_files_dir, 'masks'))
 
 
-    file_info_df = pd.DataFrame(columns=['image_num',
-                                         'patient_num'
-                                         'original_id',
-                                         'patient_id',
-                                         'contour_file_name_with_path',
-                                         'dicom_file_name_with_path',
-                                         'img_size'
-                                         'data_coords'])
+    file_info_df = pd.DataFrame(columns=['image_num'])#,
+                                         # 'patient_num'
+                                         # 'original_id',
+                                         # 'patient_id',
+                                         # 'o_contour_file_name_with_path',
+                                         # 'i_contour_file_name_with_path',
+                                         # 'dicom_file_name_with_path',
+                                         # 'img_size'
+                                         # 'o_coords',
+                                         # 'i_coords'])
     for idx, row in link.iterrows():
         patient_num = int(row.patient_id.split('SCD0000')[1].split('01')[0])
         # check for errors with the files and reduce the dataset depending on these errors
         try:
-            contourdir = os.path.join(all_files_dir, 'contourfiles', row.original_id, 'i-contours')
-            contour_files = os.listdir(contourdir)
+            # first check for the o-contour, then check for the i-contour
+            o_contourdir = os.path.join(all_files_dir, 'contourfiles', row.original_id, 'o-contours')
+            o_contour_files = os.listdir(o_contourdir)
             dicomdir = os.path.join(all_files_dir, 'dicoms', row.patient_id)
-            for filename in contour_files:
+            i_contourdir = os.path.join(all_files_dir, 'contourfiles', row.original_id, 'i-contours')
+            for filename in o_contour_files:
                 image_nums = []
                 patient_nums = []
                 original_id = []
                 patient_id = []
-                contour_file_names_with_path = []
+                o_contour_file_names_with_path = []
+                i_contour_file_names_with_path = []
                 dicom_file_names_with_path = []
-                data_coords = []
+                o_coords = []
+                i_coords = []
 
                 if 'IM-0001' in filename:
                     try:
@@ -95,13 +101,18 @@ def create_file_info_df(all_files_dir):
                         original_id.append(row.original_id)
                         patient_id.append(row.patient_id)
 
-                        contour_file_names_with_path.append(os.path.join(contourdir, filename))
+                        o_contour_file_names_with_path.append(os.path.join(o_contourdir, filename))
+                        i_contour_filename = filename.replace('ocontour','icontour')
+                        i_contour_file_names_with_path.append(os.path.join(i_contourdir, i_contour_filename))
 
                         dicomfile = os.path.join(dicomdir, str(image_num) + '.dcm')
                         dicom_file_names_with_path.append(dicomfile)
 
-                        coords = parse_contour_file(os.path.join(contourdir, filename))
-                        data_coords.append(coords)
+                        o_coord = parse_contour_file(os.path.join(o_contourdir, filename))
+                        o_coords.append(o_coord)
+
+                        i_coord = parse_contour_file(os.path.join(i_contourdir, i_contour_filename))
+                        i_coords.append(i_coord)
                     except:
                         print('Warning: '+filename+' not read')
 
@@ -109,13 +120,34 @@ def create_file_info_df(all_files_dir):
                 temp_df['patient_num'] = patient_nums
                 temp_df['original_id'] = original_id
                 temp_df['patient_id'] = patient_id
-                temp_df['contour_file_name_with_path'] = contour_file_names_with_path
+                temp_df['o_contour_file_name_with_path'] = o_contour_file_names_with_path
+                temp_df['i_contour_file_name_with_path'] = i_contour_file_names_with_path
                 temp_df['dicom_file_name_with_path'] = dicom_file_names_with_path
-                temp_df['data_coords'] = data_coords
+                temp_df['o_coords'] = o_coords
+                temp_df['i_coords'] = i_coords
                 file_info_df = pd.concat((file_info_df, temp_df), axis=0)
         except:
             print('Error: contour and dicom matching')
     return file_info_df
+
+# def parse_link_file(link_df):
+#     """
+#     Make sure that the contours in the link file match based on their numbers.
+#     :param link_df:
+#     :return:
+#     """
+#     'SCD0000501, SC-HF-I-6'
+#     bad_idx = []
+#     for idx, row in link_df.iterrows():
+#         try:
+#             patient_num = row.patient_id.replace('SCD0000','').replace('01','')
+#             original_num = row.original_id.split('-')[-1]
+#             if original_num != patient_num:
+#                 bad_idx.append(idx)
+#         except:
+#             bad_idx.append(idx)
+#     return link_df.drop(bad_idx,axis=0).copy()
+
 
 
 def parse_contour_file(filename):
@@ -182,7 +214,9 @@ def poly_to_mask(polygon, width, height):
     return mask
 
 if __name__=="__main__":
-    epoch = create_epoch('final_data')
-    images,targets = epoch.get_current_batch()
-    while images is not None:
-        images, targets = epoch.get_current_batch()
+    file_info_df = create_file_info_df('final_data')
+    file_info_df.to_csv('file_info_df_april16_2018.csv')
+    # epoch = create_epoch('final_data')
+    # images,targets = epoch.get_current_batch()
+    # while images is not None:
+    #     images, targets = epoch.get_current_batch()
