@@ -41,6 +41,8 @@ In order to modify the code to parse the o-contour, I used the o-contour filenam
 
 I also noted when plotting the i-contours and o-contours atop the images, that the last files listed in the link file did not appear to have accurate o-contour files. Because of this, I created a new link file that omitted the last file.
 
+To test that the i-contours and o-contours were correctly placed, I generated plots that are located in testing/test_image_matching showing the images, contours, and masks.
+
 ## Analysis for Heuristic LV segmentation
 
 The analysis for LV segmentation is located in analysis/Heuristic_LV_Segmentation_approaches.ipynb. The histogram in that file shows that a simple thresholding scheme (thresholding all of the images based on a specific pixel value in order to get the i-contour) would not be sufficient. There is considerable overlap in the average pixel intensities between the inner blood pool and outer contour, so selecting a specific value for thresholding likely wouldn't work. There is also considerable overlap between the individual pixel intensities, as shown in the plot above.
